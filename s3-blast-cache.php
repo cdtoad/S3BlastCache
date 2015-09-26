@@ -9,11 +9,6 @@ Author:      Dave Miyares
 Author URI:  http://www.JargonBox.com/about
  */
  
- 
- 
- 
- 
- 
  add_action('admin_menu', 's3_blast_cache_admin_actions');
  
  function s3_blast_cache_admin_actions() {
@@ -84,16 +79,20 @@ Author URI:  http://www.JargonBox.com/about
  		<h2>S3 Blast Cache Settings</h2>
  	
  	<form name="S3_blast_cache_settings_page" action="" method="post">
- 		
- 				 
- 						<table class="widefat fixed" cellspacing="0" BORDER="0">
+ 	
+ 						<input type="text" name="dir" value="<?=plugin_dir_url( __FILE__ )?>" id="S3_BLAST_CACHE_PLUGIN_DIR" NAME="S3_BLAST_CACHE_PLUGIN_DIR"  />
+ 						
+ 			
+ 					<table class="widefat fixed" cellspacing="0" BORDER="0">
  						<thead>
 			 				<th WIDTH="15%"><h3>S3 Settings <?=$Upload_to_S3_dir?></h3></th><th>&nbsp;</th>
  						</thead>
- 							<tr><td WIDTH="15%">AWS ACCESS KEY ID</td>    <td><input type="text" name="S3_BLAST_CACHE_AWS_KEY" value="<?=$S3_BLAST_CACHE_AWS_KEY?>" id="S3_BLAST_CACHE_AWS_KEY"></td></tr>
- 							<tr><td WIDTH="15%">AWS SECRET ACCESS KEY</td><td><input type="PASSWORD" name="S3_BLAST_CACHE_AWS_SECRET" value="<?=$S3_BLAST_CACHE_AWS_SECRET?>" id="S3_BLAST_CACHE_AWS_SECRET"></td></tr>
- 							<tr><td WIDTH="15%">S3 TARGET BUCKET/DOMAIN NAME</td><td><input type="TEXT" name="S3_BLAST_CACHE_BUCKET" value="<?=$S3_BLAST_CACHE_BUCKET?>" id="S3_BLAST_CACHE_BUCKET"> Should match PUBLIC domain name of site</td></tr>
- 							<tr><td WIDTH="15%">Local URL</td><td><input type="TEXT" name="LocalURL" value="<?=$LocalURL?>" id="LocalURL"  disabled> URL of Private / URL site.  This will be replaced with the domain above</td></tr>
+ 							<tr><td WIDTH="15%">AWS ACCESS KEY ID</td>    <td><input type="text" name="S3_BLAST_CACHE_AWS_KEY" value="<?=$S3_BLAST_CACHE_AWS_KEY?>" id="S3_BLAST_CACHE_AWS_KEY" size="50"></td></tr>
+ 							<tr><td WIDTH="15%">AWS SECRET ACCESS KEY</td><td><input type="PASSWORD" name="S3_BLAST_CACHE_AWS_SECRET" value="<?=$S3_BLAST_CACHE_AWS_SECRET?>" id="S3_BLAST_CACHE_AWS_SECRET" size="50"></td></tr>
+ 							<tr><td WIDTH="15%">S3 TARGET BUCKET/DOMAIN NAME</td><td><input type="TEXT" name="S3_BLAST_CACHE_BUCKET" value="<?=$S3_BLAST_CACHE_BUCKET?>" id="S3_BLAST_CACHE_BUCKET" size="50"> Should match PUBLIC domain name of site</td></tr>
+ 							<tr><td WIDTH="15%">Local URL</td><td><input type="TEXT" name="LocalURL" value="<?=$LocalURL?>" id="LocalURL"  disabled size="50"> URL of Private / URL site.  This will be replaced with the domain above</td></tr>
+ 							<tr><td WIDTH="15%">Working Directory</td><td><input type="TEXT" name="Upload_to_S3_dir" value="<?=$Upload_to_S3_dir?>" id="Upload_to_S3_dir"  disabled size="50"> Working Directory we'll upload to S3</td></tr>
+ 						
  						</table>
  							<br />
  

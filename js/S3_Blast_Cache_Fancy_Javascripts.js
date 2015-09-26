@@ -4,8 +4,9 @@
 				var KEY   =jQuery('#S3_BLAST_CACHE_AWS_KEY').val();  
 				var SECRET=jQuery('#S3_BLAST_CACHE_AWS_SECRET').val();  
 				var DOMAIN=jQuery('#S3_BLAST_CACHE_BUCKET').val();  
+				var PLUGIN_DIR=jQuery('#S3_BLAST_CACHE_PLUGIN_DIR').val();  
 				
-				var DATA2PASS={KEY:KEY,SECRET:SECRET,DOMAIN:DOMAIN};
+				var DATA2PASS={KEY:KEY,SECRET:SECRET,DOMAIN:DOMAIN,PLUGIN_DIR:PLUGIN_DIR};
 				 
        	console.log("Checking to see if "+DOMAIN+" Access works.");
         
