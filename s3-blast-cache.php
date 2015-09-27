@@ -4,10 +4,13 @@
 Plugin Name: S3 Blast Cache
 Plugin URI:  http://www.JargonBox.com/S3BlastCache
 Description: Exports your wordpress content into HTML format and loads to S3 for a super fast static website
-Version:     0.1-alpha
+Version:     0.001-Omega
 Author:      Dave Miyares
 Author URI:  http://www.JargonBox.com/about
  */
+ 
+ 
+ add_action('admin_init', 's3_blast_cache_test_s3');
  
  add_action('admin_menu', 's3_blast_cache_admin_actions');
  
@@ -18,25 +21,66 @@ Author URI:  http://www.JargonBox.com/about
 	}
 
 
+  function s3_blast_cache_test_s3(){
+	  
+	  	// test S3 here
+	
+		 if(isset($_POST['ISTEST'])){
+	###
+				$CurrentTimeStamp=date('Y-m-d H:i:s');
+				if (!class_exists('S3')) require_once 's3.php';
+
+		// AWS access info
+
+				$awsAccessKey=$_POST['KEY'];
+				$awsSecretKey=$_POST['SECRET'];
+				$Domain=$_POST['DOMAIN'];
+
+					print("[".$CurrentTimeStamp."] testing....");
+
+					$s3 = new S3($awsAccessKey, $awsSecretKey);
+ 
+ 
+					if (($contents = $s3->getBucket($Domain,'','',1)) !== false) {
+ 			
+					print("S3 Domain Bucket Found & Working.");
+					print("<img src=\"".plugin_dir_url( __FILE__ )."images/tick.png\">\n");
+ 			
+					}  ELSE {
+    	 
+					echo 'ERROR: Either access credeitals are wrong or bucket/domain ['.$Domain.'] doesn\'t exist on S3';  // yeah need better E.H. here.	
+
+		}
+
+
+    ###
+		
+		
+		// don't write anything beyone here you'll screw up everything!	
+			EXIT();
+		}
+	  
+	  
+  }
+
+
   function s3_blast_cache_admin_menu_page(){
+	  
+	 
   	$Upload_Array= wp_upload_dir(); 
     $Upload_to_S3_dir=$Upload_Array['basedir']."/upload_to_S3/";
-
+	 
 		$shittest="";
 	
 		$LocalURL = str_replace( 'http://', '', str_replace( 'https://', '', get_option( 'siteurl' ) ) );
-	#	$LocalURL =  get_bloginfo( 'url' );
-	 
-		
- # 	require_once('s3.php');  // doesn't need to be in here idiot
-  	 
-  	 
+#	$LocalURL =  get_bloginfo( 'url' );
+# 	require_once('s3.php');  // doesn't need to be in here idiot
+
+ 
+
   		if(isset($_POST['s3_blast_cache_create'])){
   				if($_POST['s3_blast_cache_create']){
   						$shittest=wp_remote_get("http://www.bitesizedculture.com/", array('timeout' => 60, 'blocking' => true ) );
-  						
-  						
-  						
   				}
   				
   		} 
@@ -55,7 +99,7 @@ Author URI:  http://www.JargonBox.com/about
   		 update_option('S3_BLAST_CACHE_CONFIG',$s3_blast_cache_array_save); // SAVE THE 4 VARIABLES
   		 
   		 // reload variables to show on form.
-  		 				$S3_BLAST_CACHE_AWS_KEY=$s3_blast_cache_array_save['AWSKEY'];
+  		 			$S3_BLAST_CACHE_AWS_KEY=$s3_blast_cache_array_save['AWSKEY'];
   				    $S3_BLAST_CACHE_AWS_SECRET=$s3_blast_cache_array_save['AWSSECRET'];
   				    $S3_BLAST_CACHE_BUCKET=$s3_blast_cache_array_save['BUCKET'];
   		

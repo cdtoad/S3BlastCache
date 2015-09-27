@@ -4,38 +4,24 @@
 				var KEY   =jQuery('#S3_BLAST_CACHE_AWS_KEY').val();  
 				var SECRET=jQuery('#S3_BLAST_CACHE_AWS_SECRET').val();  
 				var DOMAIN=jQuery('#S3_BLAST_CACHE_BUCKET').val();  
-				var PLUGIN_DIR=jQuery('#S3_BLAST_CACHE_PLUGIN_DIR').val();  
 				
-				var DATA2PASS={KEY:KEY,SECRET:SECRET,DOMAIN:DOMAIN,PLUGIN_DIR:PLUGIN_DIR};
+//				var PLUGIN_DIR=jQuery('#S3_BLAST_CACHE_PLUGIN_DIR').val();  
+				
+				var DATA2PASS={ISTEST:'THISISATEST',KEY:KEY,SECRET:SECRET,DOMAIN:DOMAIN,PLUGIN_DIR:PLUGIN_DIR};
 				 
        	console.log("Checking to see if "+DOMAIN+" Access works.");
         
-          jQuery.post('/wp-content/plugins/S3BlastCache/s3-blast-cache-test-access-to-bucket.php',DATA2PASS, function(data) {
-//           	alert(data);
+//          jQuery.post('/wp-content/plugins/S3BlastCache/s3-blast-cache-test-access-to-bucket.php',DATA2PASS, function(data) {
+
+// 			this pulls the test into the main file and we don't have to monkey with passing diretories.  Keeps everything clean(er)
+
+            jQuery.post('',DATA2PASS, function(data) {
+
 				
-        
-        
-        
         var BarfUpMessage = jQuery('#S3BucketStatus');
 			      BarfUpMessage.html('<pre>'+data+'</pre>');
- 
-    
-    
     		
            	console.log(data);
-     
-          	
-           	
-           	
        		 } ); // , 'json'
-           
-           
-           
        	 } 
         );
-       
-       
-
-  
- 
-       

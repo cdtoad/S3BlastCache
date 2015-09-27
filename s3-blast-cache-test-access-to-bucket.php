@@ -1,6 +1,8 @@
 <?php
 
+# moved into main php file.
 
+exit();
 #error_reporting(0);
 
 $CurrentTimeStamp=date('Y-m-d H:i:s');
@@ -16,6 +18,7 @@ $PLUGIN_DIR=$_POST['PLUGIN_DIR'];
 print("[".$CurrentTimeStamp."] testing....");
 
 	$s3 = new S3($awsAccessKey, $awsSecretKey);
+ 
  #   if (($contents = $s3->listBuckets()) !== false) {
  #	public static function getBucket($bucket, $prefix = null, $marker = null, $maxKeys = null, $delimiter = null, $returnCommonPrefixes = false)
 	
