@@ -1,0 +1,3 @@
+build the sql to pull posts & pages here...
+
+figure out how to do categories & tags.

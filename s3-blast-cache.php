@@ -11,8 +11,90 @@ Author URI:  http://www.JargonBox.com/about
  
  
  add_action('admin_init', 's3_blast_cache_test_s3');
- 
+ add_action('admin_init', 's3_blast_cache_build_cache');
  add_action('admin_menu', 's3_blast_cache_admin_actions');
+ register_activation_hook(__FILE__, 's3_blast_cache_activation'); 
+ add_filter('plugin_action_links', 's3_blast_cache_plugin_action_links', 10, 2);
+ add_action( 'admin_enqueue_scripts', 'BlastCacheFancyJS' );
+ 
+ 
+ // 
+ 
+ function s3_blast_cache_activation() {
+   global $wpdb;   
+   $table_name = $wpdb->prefix . "s3_blast_cache"; 
+   if($wpdb->get_var("show tables like '$table_name'") != $table_name) {      
+      $sql = "CREATE TABLE " . $table_name . " (
+          HASH char(32) NOT NULL,
+          post_id bigint(20) unsigned not null 
+        );";
+     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+      dbDelta($sql);
+   }
+}
+
+ 
+ 
+ 
+ function s3_blast_cache_build_cache(){
+	 
+	   		if(isset($_POST['CREATEHTML'])){
+  				
+  			global $wpdb; 
+			
+			$s3_blast_cache_DB_posts_table=$wpdb->prefix."posts"; 
+
+	// FIRST LOAD ALL HEADLINES & HASHES INTO AN ARRAY
+	
+	$sql_pull_posts_pages="select ID,post_title,md5(concat(post_content,post_title,post_modified_gmt)) as HASH from ".$s3_blast_cache_DB_posts_table." where post_type in ('post','page') and post_status='publish';";
+
+	#print($sql_pull_posts_pages);
+	
+	
+	 
+	 $s3_blast_cache_post_hash_querey = $wpdb->get_results($sql_pull_posts_pages);
+	
+		// build a better array based of Post ID
+				$s3_blast_cache_post_hash_array=array();
+							foreach($s3_blast_cache_post_hash_querey as $post_item_id){
+
+									$s3_blast_cache_post_hash_array[$post_item_id->ID]['HASH']=$post_item_id->HASH;
+									$s3_blast_cache_post_hash_array[$post_item_id->ID]['TITLE']=$post_item_id->post_title;
+									
+									
+								}
+			
+			ksort($s3_blast_cache_post_hash_array);
+				#print_r($s3_blast_cache_post_hash_array);
+	
+	
+		// start pulling posts
+		
+			foreach($s3_blast_cache_post_hash_array as $s3_blast_cache_post){
+
+				#		$REMOTE_HTML=wp_remote_get("http://www.icleveland.com/", array('timeout' => 60, 'blocking' => true ) );
+	
+						$REMOTE_HTML=wp_remote_get("http://www.icleveland.com/", array('timeout' => 60, 'blocking' => true ) );
+							
+						}	
+				
+		// finally pull & process home page since this should update everytime there's a new post.  
+		// check logic on this one. bounce of hash too?
+		
+		$s3_blast_cache_homepage_puller = wp_remote_get( site_url(), array('timeout' => 60, 'blocking' => true ) );			
+						
+  						exit();
+  				 
+  				
+  		} 
+ 
+ }
+ 
+ 
+
+ 
+
+ 
  
  function s3_blast_cache_admin_actions() {
 	 
@@ -67,25 +149,19 @@ Author URI:  http://www.JargonBox.com/about
   function s3_blast_cache_admin_menu_page(){
 	  
 	 
+	 
   	$Upload_Array= wp_upload_dir(); 
     $Upload_to_S3_dir=$Upload_Array['basedir']."/upload_to_S3/";
 	 
-		$shittest="";
+	 
+	// test to see if upload directory exists && create if false
+	
+		if(!(is_dir($Upload_to_S3_dir))){
+			mkdir($Upload_to_S3_dir, 0777);
+			}
 	
 		$LocalURL = str_replace( 'http://', '', str_replace( 'https://', '', get_option( 'siteurl' ) ) );
-#	$LocalURL =  get_bloginfo( 'url' );
-# 	require_once('s3.php');  // doesn't need to be in here idiot
 
- 
-
-  		if(isset($_POST['s3_blast_cache_create'])){
-  				if($_POST['s3_blast_cache_create']){
-  						$shittest=wp_remote_get("http://www.bitesizedculture.com/", array('timeout' => 60, 'blocking' => true ) );
-  				}
-  				
-  		} 
-  	 
-  	 
   	if(isset($_POST['s3_blast_cache_save'])){
   		
   	# 	 $x=	PRINT_R($_POST,true);echo '<pre>'.$x.'</pre>';
@@ -141,14 +217,14 @@ Author URI:  http://www.JargonBox.com/about
  							<br />
  
  						
- 				<input type="button" id="s3_blast_cache_test" name="s3_blast_cache_test" value="Test" class="button-primary"> 						
- 				<input type="submit" id="s3_blast_cache_save" name="s3_blast_cache_save" value="Save" class="button-primary"> 				
- 				<input type="submit" id="s3_blast_cache_create" name="s3_blast_cache_create" value="Create & Upload S3 Blast Cache" class="button-primary"> 						 				
+ 				<input type="button" id="s3_blast_cache_test" name="s3_blast_cache_test"   value="Test" class="button-primary"> 						
+ 				<input type="submit" id="s3_blast_cache_save" name="s3_blast_cache_save"   value="Save" class="button-primary"> 				
+ 			  <input type="button" id="s3_blast_cache_create" name="s3_blast_cache_create" value="Create & Upload S3 Blast Cache" class="button-primary">
 
 </form>
  	
  	<div id="S3BucketStatus" name="S3BucketStatus" value="Untested">Untested</div>
- 	<?php print_r($shittest);?>
+ 	 
 </div>
 
 <?php
@@ -168,4 +244,21 @@ function BlastCacheFancyJS($hook) {
 
     wp_enqueue_script( 'S3_BLAST_CACHE_FANCY', plugin_dir_url( __FILE__ ) . 'js/S3_Blast_Cache_Fancy_Javascripts.js','','v0.001',true );
 }
-add_action( 'admin_enqueue_scripts', 'BlastCacheFancyJS' );
+
+
+
+function s3_blast_cache_plugin_action_links($links, $file) {
+    static $this_plugin;
+
+    if (!$this_plugin) {
+        $this_plugin = plugin_basename(__FILE__);
+    }
+
+    if ($file == $this_plugin) {
+    
+        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=S3BlastCache%2Fs3-blast-cache.php">Settings</a>';
+        array_unshift($links, $settings_link);
+    }
+
+    return $links;
+}
