@@ -70,14 +70,18 @@ Author URI:  http://www.JargonBox.com/about
 	
 		// start pulling posts
 		
-			foreach($s3_blast_cache_post_hash_array as $s3_blast_cache_post){
+			foreach($s3_blast_cache_post_hash_array as $s3_blast_cache_post_ID => $s3_blast_cache_post_details){
 
 				#		$REMOTE_HTML=wp_remote_get("http://www.icleveland.com/", array('timeout' => 60, 'blocking' => true ) );
-	
-						$REMOTE_HTML=wp_remote_get("http://www.icleveland.com/", array('timeout' => 60, 'blocking' => true ) );
+						$url = get_permalink( $s3_blast_cache_post_ID );
+						$REMOTE_HTML=wp_remote_get($url, array('timeout' => 30, 'blocking' => true ) );
+						$REMOTE_HTML['HASH']=md5($REMOTE_HTML['body']);
+						UNSET($REMOTE_HTML['body']);
+						print_r($REMOTE_HTML);
 							
 						}	
 				
+				EXIT();
 		// finally pull & process home page since this should update everytime there's a new post.  
 		// check logic on this one. bounce of hash too?
 		
