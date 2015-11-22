@@ -3,8 +3,9 @@
 				var KEY   =jQuery('#S3_BLAST_CACHE_AWS_KEY').val();  
 				var SECRET=jQuery('#S3_BLAST_CACHE_AWS_SECRET').val();  
 				var DOMAIN=jQuery('#S3_BLAST_CACHE_BUCKET').val();  
+		
 				var DATA2PASS={ISTEST:'THISISATEST',KEY:KEY,SECRET:SECRET,DOMAIN:DOMAIN};
-				 
+ 
       // 	console.log("Checking to see if "+DOMAIN+" Access works.");
             jQuery.post('',DATA2PASS, function(data) {
         var BarfUpMessage = jQuery('#S3BucketStatus');
@@ -22,8 +23,8 @@
 	   	console.log('Starting');
         var BarfUpMessage = jQuery('#S3BucketStatus');
         var DATA2PASS={CREATEHTML:'CREATEHTML'};
-        
-		BarfUpMessage.html('Creating HTML for cache.');
+        var S3_BLAST_CACHE_PLUGIN_DIR=jQuery('#S3_BLAST_CACHE_PLUGIN_DIR').val(); 
+		BarfUpMessage.html('Creating HTML for cache.<img src="'+S3_BLAST_CACHE_PLUGIN_DIR+'images/spinner.gif">');
 				
             jQuery.post('',DATA2PASS, function(data) {
 				  BarfUpMessage.html('<pre>'+data+'</pre>');

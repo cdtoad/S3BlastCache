@@ -34,10 +34,6 @@
 * @link http://undesigned.org.za/2007/10/22/amazon-s3-php-class
 * @version 0.5.1
 */
-
-
-// from https://github.com/tpyo/amazon-s3-php-class
-
 class S3
 {
 	// ACL flags
@@ -48,6 +44,7 @@ class S3
 
 	const STORAGE_CLASS_STANDARD = 'STANDARD';
 	const STORAGE_CLASS_RRS = 'REDUCED_REDUNDANCY';
+	const STORAGE_CLASS_STANDARD_IA = 'STANDARD_IA';
 
 	const SSE_NONE = '';
 	const SSE_AES256 = 'AES256';
