@@ -1,8 +1,9 @@
-   jQuery('#s3_blast_cache_test').click(function() {
+   jQuery('#s3_Cache_Blaster_test').click(function() {
        
-				var KEY   =jQuery('#S3_BLAST_CACHE_AWS_KEY').val();  
-				var SECRET=jQuery('#S3_BLAST_CACHE_AWS_SECRET').val();  
-				var DOMAIN=jQuery('#S3_BLAST_CACHE_BUCKET').val();  
+			alert('hi');
+				var KEY   =jQuery('#S3_Cache_Blaster_AWS_KEY').val();  
+				var SECRET=jQuery('#S3_Cache_Blaster_AWS_SECRET').val();  
+				var DOMAIN=jQuery('#S3_Cache_Blaster_BUCKET').val();  
 		
 				var DATA2PASS={ISTEST:'THISISATEST',KEY:KEY,SECRET:SECRET,DOMAIN:DOMAIN};
  
@@ -18,12 +19,12 @@
         
  // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
       
-   jQuery('#s3_blast_cache_create').click(function() {
+   jQuery('#s3_Cache_Blaster_create').click(function() {
 	   
 	   	console.log('Starting');
         var BarfUpMessage = jQuery('#S3BucketStatus');
         var DATA2PASS={CREATEHTML:'CREATEHTML'};
-        var S3_BLAST_CACHE_PLUGIN_DIR=jQuery('#S3_BLAST_CACHE_PLUGIN_DIR').val(); 
+        var S3_BLAST_CACHE_PLUGIN_DIR=jQuery('#S3_Cache_Blaster_PLUGIN_DIR').val(); 
 		BarfUpMessage.html('Creating HTML for cache.<img src="'+S3_BLAST_CACHE_PLUGIN_DIR+'images/spinner.gif">');
 				
             jQuery.post('',DATA2PASS, function(data) {
