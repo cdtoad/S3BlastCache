@@ -44,6 +44,7 @@ function s3_Cache_Blaster_build_cache(){
   			global $wpdb; 
 
 			  $Upload_Array= wp_upload_dir();
+			 
 				$Upload_to_S3_dir=$Upload_Array['basedir']."/upload_to_S3/";
 			
 			  $s3_Cache_Blaster_DB_posts_table=$wpdb->prefix."posts"; 
@@ -56,9 +57,9 @@ function s3_Cache_Blaster_build_cache(){
   
         $LocalURL = str_replace( 'http://', '', str_replace( 'https://', '', get_option( 'siteurl' ) ) );
 
-
+				$ThemeObjects=array();
 	
-/*
+ 
 
 	// FIRST LOAD ALL HEADLINES & HASHES INTO AN ARRAY
 	
@@ -90,7 +91,82 @@ function s3_Cache_Blaster_build_cache(){
 						$REMOTE_HTML['HASH']=md5($REMOTE_HTML['body']);
 
 	
+	// DIG UP ANYTHING THAT GOES INTO THE THEMES DIRECTORY
 	
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	// WHY NOT JUST COPY THE WHOLE DAMN /wp-content/ directory over and get all images and all files and all that stuff tuff guy?
+	         
+	  $WP_baseDir=get_home_path();
+	 	$OLDURL =  "|".$WP_baseDir."|ism";
+		$NEWURL = "";
+		
+		
+		$FilesToUpload=wp_upload_dir();
+		$UploadsDir=$FilesToUpload['basedir'];
+ 
+ 
+ 
+		$ThemeFilesToUpload=get_template_directory();
+				
+#					$files1 = scandir($PushDirectory);
+#s3_Cache_Blaster_push_to_s3($Upload_to_S3_dir."index.html");
+				$path = realpath($UploadsDir);
+				$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
+						foreach($objects as $name => $object){
+    						if(!(is_dir($name,-1))){ 
+						
+							$S3FileName=preg_replace($OLDURL, $NEWURL, $name);
+
+							    							
+    					echo "attachment $name -----> $S3FileName \n";
+						s3_Cache_Blaster_push_to_s3($name,$S3FileName);
+						
+exit();
+    				}
+							}
+				
+ 			$path = realpath($ThemeFilesToUpload);
+				$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
+						foreach($objects as $name => $object){
+							if(substr($name,-1) !="." && substr($name,-3) !="php"){ 
+	
+												
+							$S3FileName=preg_replace($OLDURL, $NEWURL, $name);
+
+    					echo "theme $name -----> $S3FileName \n";
+    				}
+							}
+			
+ 
+	        exit(); 
+	         
+		
+	
+			$pattern = '/\/wp-content\/themes(.*?)[\"|\'|\)]/ism';
+			preg_match_all($pattern,$REMOTE_HTML['body'], $matches);
+		
+				$TheMatchesIwant=$matches[1];
+				
+						foreach($TheMatchesIwant as $ThemeJunk){
+							
+							$ThemeObjectHash=md5($ThemeJunk);
+							$ThemeObjects[$ThemeObjectHash]=$ThemeJunk;
+							
+							
+						}
+		
+		
+			
+					
 				$PartsOfURL=parse_url($URL2CACHE);
 				$HTMLfileName=trim($PartsOfURL['path'],'/');
 
@@ -110,15 +186,43 @@ function s3_Cache_Blaster_build_cache(){
 		
 		
 		
-		PRINT("\nPushing item to S3");
-		ob_flush();
-		flush();
-				s3_Cache_Blaster_push_to_s3($Upload_to_S3_dir.$HTMLfileName);
+	#	PRINT("\nPushing item to S3");
+	#	ob_flush();
+	#	flush();
+	#			s3_Cache_Blaster_push_to_s3($Upload_to_S3_dir.$HTMLfileName);
 			 
 
 						}	
 				
-		 
+
+	 	print_r($ThemeObjects);
+	 	#exit();		 
+	
+	
+	
+		
+	
+					foreach($ThemeObjects as $ThemeObjct){
+						
+							 $Tfile=$Upload_Array['basedir'].$ThemeObjct;
+								$EXPLODE_THEME_FILE=EXPLODE("/",$Tfile);
+
+					print_r($EXPLODE_THEME_FILE);exit();
+				
+							$BUCKET_FILE_index=count($EXPLODE_THEME_FILE)-1;
+
+				$UploadFolder="/".$EXPLODE_THEME_FILE[$BUCKET_FILE_index -2]."/".$EXPLODE_THEME_FILE[$BUCKET_FILE_index -1];
+					
+	
+		#		s3_Cache_Blaster_push_to_s3($file,$file_type,$DESTINATION_BUCKET.$UploadFolder);
+					
+						
+						
+					}
+	
+	
+	
+	
 		// finally pull & process home page since this should update everytime there's a new post.  
 		// check logic on this one. bounce of hash too?
 		
@@ -133,10 +237,10 @@ function s3_Cache_Blaster_build_cache(){
 							   fwrite( $fp, $HTML_BODY);
 							   fclose( $fp );
   	  s3_Cache_Blaster_push_to_s3($Upload_to_S3_dir."index.html");
-  		exit(); # end it here or wp shits all over itself.
-  			} 
+ # 		exit(); # end it here or wp shits all over itself.
+ # 			} 
   			
-	*/
+ 
 	
 	
 	// NEXT LETS MAKE SURE WE MOVE ALL ATTACHEMENTS OVER TO THE S3
@@ -147,25 +251,65 @@ function s3_Cache_Blaster_build_cache(){
 	  $s3_Cache_Blaster_attachment_hash_querey = $wpdb->get_results($sql_pull_posts_attachments);
 	
 	#print($sql_pull_posts_attachments);
-	
+ #	PRINT_R($Upload_Array);EXIT();
 			foreach($s3_Cache_Blaster_attachment_hash_querey as $attachment){
 				
-				
+				$DESTINATION_BUCKET="/wp-content/uploads";
 				$file=$attachment->guid;
 				$file_type=$attachment->post_mime_type;
 				
-				$OLDURL =  "/".$LocalURL."/ism";
+				$OLDURL =  "/".$LocalURL."\/wp-content\/uploads/ism";
 				$NEWURL = "";
 				
  		$file=preg_replace($OLDURL, $NEWURL, $file);
+				$OLDURL =  "/http:\/\//ism";
+				$NEWURL = "";
 				
-				print($file." - ".$file_type."\n");
+ 		$file=preg_replace($OLDURL, $NEWURL, $file);
+		
+		
+		#	$DESTINATION_BUCKET=$DESTINATION_BUCKET.$file;
+			
+		
+ 	   $file=$Upload_Array['basedir'].$file;
+	
+				
+				
+				$EXPLODE_FILE=EXPLODE("/",$file);
+
+
+#		  	print_r($EXPLODE_FILE);			exit();
+/*
+
+(
+    [0] => 
+    [1] => web
+    [2] => BlastCache
+    [3] => html
+    [4] => wp-content
+    [5] => uploads
+    [6] => 2008
+    [7] => 07
+    [8] => iko-animated-banner2.gif
+)
+
+*/				
+				$BUCKET_FILE_index=count($EXPLODE_FILE)-1;
+
+				$UploadFolder="/".$EXPLODE_FILE[$BUCKET_FILE_index -2]."/".$EXPLODE_FILE[$BUCKET_FILE_index -1];
+					
+			# 	print_r($EXPLODE_FILE[$BUCKET_FILE_index]);EXIT();
+				
+	#		print("pushing:".$file." - ".$file_type." - BUCKFILE----->".$DXESTINATION_BUCKET.$UploadFolder."\n");			
+	 	 	 s3_Cache_Blaster_push_to_s3($file,$file_type,$DESTINATION_BUCKET.$UploadFolder);
 				
 			}			
 	
-  			print_r($s3_Cache_Blaster_attachment_hash_querey); exit();
-  			
-	 }
+				print("\n**** Done Uploading Attachments\n");
+  	 #		print_r($s3_Cache_Blaster_attachment_hash_querey); exit();
+  	 exit();		
+	 }	
+
  	}
  
 ############################################################
@@ -366,7 +510,7 @@ function s3_Cache_Blaster_blast_post($post_id){ # new post new cache
 
 
 
-function s3_Cache_Blaster_push_to_s3($file,$CONTENT_TYPE="text/html"){
+function s3_Cache_Blaster_push_to_s3($file,$CONTENT_TYPE="text/html",$BUCKET_NAME=""){
 	
  
  		if (!class_exists('S3')) require_once 's3.php';
@@ -375,7 +519,7 @@ function s3_Cache_Blaster_push_to_s3($file,$CONTENT_TYPE="text/html"){
 	
 				$S3_Cache_Blaster_AWS_KEY=$s3_Cache_Blaster_array_save['AWSKEY'];
 			  $S3_Cache_Blaster_AWS_SECRET=$s3_Cache_Blaster_array_save['AWSSECRET'];
-			  $S3_Cache_Blaster_BUCKET=$s3_Cache_Blaster_array_save['BUCKET'];
+			  $S3_Cache_Blaster_BUCKET=$s3_Cache_Blaster_array_save['BUCKET'].$BUCKET_NAME;
   
 
 
@@ -388,13 +532,14 @@ function s3_Cache_Blaster_push_to_s3($file,$CONTENT_TYPE="text/html"){
 						if (($s3->putObjectFile($file, $S3_Cache_Blaster_BUCKET, baseName($file), S3::ACL_PUBLIC_READ,array(), array( "Content-Type" => $CONTENT_TYPE)) !== false)) {
 				 
 				   	print("File was uploaded to ". baseName($file));
-						flush();
-						ob_flush();
-						flush();  
+#						flush();
+#						ob_flush();
+#						flush();  
 				 }
 				 
 				 else { 
-				 echo '<STRONG>ERROR: Unable to upload test file</STRONG>
+				 echo '
+<STRONG>ERROR: Unable to upload file</STRONG>
 <b>FILE:</b>'.$file.'
 <b>BUCKET:</b>'.$S3_Cache_Blaster_BUCKET.'
 
