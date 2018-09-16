@@ -4,7 +4,7 @@
 Plugin Name: Cache Blaster
 Plugin URI:  http://www.cacheblaster.com
 Description: Exports your wordpress content into HTML format and loads to S3 for a super fast static website
-Version:     0.002-alpha
+Version:     0.003-alpha
 Author:      Dave Miyares
 Author URI:  http://www.cacheblaster.com/about
  */
